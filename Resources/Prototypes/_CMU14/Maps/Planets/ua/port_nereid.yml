@@ -28,9 +28,9 @@
     threats:
     - XenoThreat
     - NeomorphsThreat
-    - AbominationsThreatDS
-    - ApeThreatDS
-    - BadBloodClanThreat
+#   - AbominationsThreatDS # Sunday
+#   - ApeThreatDS # Sunday
+#   - BadBloodClanThreat # Saturday
     - XenoThreatCF
     - NeomorphsThreatCF
     - CultistThreatCF
@@ -39,6 +39,7 @@
     - TribalsThreatCF
     - ApeThreatCF
     thirdparties:
+    - FreeCompanyRaidersSurv
     - ProdigySurvLarge
     - ProdigySurvMedium
     - ProdigySurvSmall

@@ -26,6 +26,7 @@
     opforinship: true
     daycycleenabled: true
     thirdparties:
+    - DiplomaticAttachesSurv
     - ICRCReliefParty
     - USArmyTank
     - WYHT
@@ -53,9 +54,9 @@
     threats:
     - XenoThreat
     - NeomorphsThreat
-    - AbominationsThreatDS
-    - ApeThreatDS
-    - BadBloodClanThreat
+#   - AbominationsThreatDS # Sunday
+#   - ApeThreatDS # Sunday
+#   - BadBloodClanThreat # Saturday
     - XenoThreatCF
     - NeomorphsThreatCF
     - CultistThreatCF

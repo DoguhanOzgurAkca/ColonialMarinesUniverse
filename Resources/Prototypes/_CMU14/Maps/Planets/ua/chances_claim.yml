@@ -26,6 +26,8 @@
     opforinship: true
     daycycleenabled: false
     thirdparties:
+    - CLFCellReinforcementsSurv
+    - FreeCompanyRaidersSurv
     - ProdigySurvLarge
     - ProdigySurvMedium
     - ProdigySurvSmall
@@ -54,9 +56,9 @@
     threats:
     - XenoThreat
     - NeomorphsThreat
-    - AbominationsThreatDS
-    - ApeThreatDS
-    - BadBloodClanThreat
+#   - AbominationsThreatDS # Sunday
+#   - ApeThreatDS # Sunday
+#   - BadBloodClanThreat # Saturday
     - XenoThreatCF
     - NeomorphsThreatCF
     - CultistThreatCF
