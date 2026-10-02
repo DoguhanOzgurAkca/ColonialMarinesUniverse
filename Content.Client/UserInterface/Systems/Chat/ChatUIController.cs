@@ -265,6 +265,7 @@ public sealed partial class ChatUIController : UIController
         }
 
         _config.OnValueChanged(CCVars.ChatWindowOpacity, OnChatWindowOpacityChanged);
+        _config.OnValueChanged(CCVars.CMUChatHousing, _ => SetChatWindowOpacity(_config.GetCVar(CCVars.ChatWindowOpacity)));
         _config.OnValueChanged(CCVars.AccessibilityColorblindFriendly, v => _colorBlindMode = v, true);
 
         InitializeHighlights();
@@ -306,6 +307,13 @@ public sealed partial class ChatUIController : UIController
         var panel = chatBox?.ChatWindowPanel;
         if (panel is null)
             return;
+
+        // CMU: on the chat housing's tube screen the log is see-through so the glass shows.
+        if (chatBox!.OnHousingScreen)
+        {
+            panel.PanelOverride = new StyleBoxFlat { BackgroundColor = Color.Transparent };
+            return;
+        }
 
         // Read the base colour from the stylesheet, never from the panel's own current override.
         // This used to check PanelOverride first, which meant each call re-read the result of the

@@ -57,7 +57,7 @@ namespace Content.Server.Chat.Managers
         RateLimitStatus HandleRateLimit(ICommonSession player);
 
         // CMU14
-        string AddGhostFollowButton(string wrappedMessage, EntityUid source, INetChannel recipient);
+        string AddGhostFollowButton(string wrappedMessage, EntityUid source, INetChannel recipient, out NetEntity followEntity);
         string AddXenoWatchButton(string wrappedMessage, EntityUid source, INetChannel recipient);
         // CMU14
     }

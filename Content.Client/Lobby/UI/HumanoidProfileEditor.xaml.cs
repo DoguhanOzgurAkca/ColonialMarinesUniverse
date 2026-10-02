@@ -1164,9 +1164,6 @@ namespace Content.Client.Lobby.UI
         /// <summary>
         /// Reloads the entire dummy entity for preview.
         /// </summary>
-        /// <remarks>
-        /// This is expensive so not recommended to run if you have a slider.
-        /// </remarks>
         private void ReloadPreview(bool updateDirty = true)
         {
             _entManager.DeleteEntity(PreviewDummy);
@@ -1820,7 +1817,10 @@ namespace Content.Client.Lobby.UI
                 "AU14JobThirdPartyMember";
         }
 
-        private static (string Key, string Title) GetMilitaryJobSegment(JobPrototype job)
+        /// <summary>Internal, not private: <see cref="Content.Client.LateJoin.LateJoinGui"/> reuses this
+        /// same classification so a department's rail-side view groups jobs the same way character
+        /// setup does, instead of re-deriving (and risking drifting from) the same heuristic.</summary>
+        internal static (string Key, string Title) GetMilitaryJobSegment(JobPrototype job)
         {
             var id = job.ID;
             var name = job.LocalizedName;
@@ -1850,7 +1850,8 @@ namespace Content.Client.Lobby.UI
             return ("line", Loc.GetString("humanoid-profile-editor-segment-line"));
         }
 
-        private static int GetJobSortGroup(DepartmentPrototype department, JobPrototype job)
+        /// <summary>Internal, not private: see the remarks on <see cref="GetMilitaryJobSegment"/>.</summary>
+        internal static int GetJobSortGroup(DepartmentPrototype department, JobPrototype job)
         {
             if (department.Faction != "govfor" && department.Faction != "opfor")
                 return 0;
@@ -2249,6 +2250,9 @@ namespace Content.Client.Lobby.UI
             var selector = new RequirementsSelector()
             {
                 Margin = new Thickness(3f, 3f, 3f, 0f),
+                HorizontalExpand = false,
+                HorizontalAlignment = HAlignment.Left,
+                MaxWidth = 620,
             };
 
             selector.Setup(

@@ -100,7 +100,7 @@ auto_record_name = "done/{year}_{month}_{day}-{hour}_{minute}-round_{round}.zip"
 
 [server]
 rules_file = "RMCOverview"
-default_guide = "RMC14"
+default_guide = "RMCOverview"
 
 [shuttle]
 arrivals_planet = false

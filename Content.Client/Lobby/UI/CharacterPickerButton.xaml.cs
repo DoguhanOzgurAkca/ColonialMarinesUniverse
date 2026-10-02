@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Content.Client._CMU14.Interface;
 using Content.Client.Humanoid;
 using Content.Client.Stylesheets;
 using Content.Shared.Clothing;
@@ -50,7 +51,6 @@ public sealed partial class CharacterPickerButton : ContainerButton
         _entManager = entityManager;
         _lobbyController = UserInterfaceManager.GetUIController<LobbyUIController>();
         AddStyleClass(StyleClassButton);
-        AddStyleClass(StyleNano.StyleClassCrtButton);
         ToggleMode = true;
         Group = group;
 
@@ -87,6 +87,12 @@ public sealed partial class CharacterPickerButton : ContainerButton
         };
 
         CrtLobbyTheme.Apply(this);
+
+        // After the theme walk, which would otherwise hand this row the shared button class.
+        RemoveStyleClass(StyleNano.StyleClassCrtButton);
+        AddStyleClass(StyleNano.StyleClassCmuCharacterSlot);
+        NameLabel.FontColorOverride = CrtTerminalPalette.TextBright;
+        JobLabel.FontColorOverride = CrtTerminalPalette.Text;
     }
 
     protected override void FrameUpdate(FrameEventArgs args)

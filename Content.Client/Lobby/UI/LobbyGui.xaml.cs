@@ -25,6 +25,12 @@ namespace Content.Client.Lobby.UI
         /// </summary>
         public Label StationTime => ServerInfo.RoundTimeLabel;
 
+        /// <summary>
+        ///     Which half of the housing's panel switch is down. Ignored with the housing off, where the
+        ///     server block and the character block are both shown at once as they always have been.
+        /// </summary>
+        public bool ShowingServerPanel = true;
+
         [Dependency] private IClientConsoleHost _consoleHost = default!;
         [Dependency] private IConfigurationManager _cfg = default!;
 
@@ -59,13 +65,28 @@ namespace Content.Client.Lobby.UI
             CollapseButton.OnPressed += _ => TogglePanel(false);
             ExpandButton.OnPressed += _ => TogglePanel(true);
 
+            // Re-applying the whole look is what moves the paddle; the switch holds no state of its own.
+            ServerPanelButton.OnPressed += _ => SetPanel(true);
+            CharacterPanelButton.OnPressed += _ => SetPanel(false);
+
             SetUpLobbyCrt();
+            CmuLobbyLook.Apply(this);
             _cfg.OnValueChanged(CCVars.CMUCrtMenuEffect, OnMenuEffectChanged);
             _cfg.OnValueChanged(CCVars.CrtUiEnabled, OnCrtEnabledChanged);
+            _cfg.OnValueChanged(CCVars.CMUChatHousing, OnHousingChanged);
         }
 
         private void OnMenuEffectChanged(bool _) => SetUpLobbyCrt();
         private void OnCrtEnabledChanged(bool _) => SetUpLobbyCrt();
+
+        // Panel overrides, not style classes, so a stylesheet rebuild does not reach them.
+        private void OnHousingChanged(string _) => CmuLobbyLook.Apply(this);
+
+        private void SetPanel(bool server)
+        {
+            ShowingServerPanel = server;
+            CmuLobbyLook.Apply(this);
+        }
 
         /// <summary>
         ///     The prop-terminal treatment on the lobby column above the chat. Decides what the tube
@@ -106,15 +127,12 @@ namespace Content.Client.Lobby.UI
             // this is not a lighter block sitting on a field - it is the ground changing at the seam,
             // and that change is what divides the sidebar without anything being stroked.
             //
-            // ServerInfoBacking and CharacterBacking follow it exactly. They exist to stop the shader
-            // writing black through transparent gaps, not to be seen; left on Surface0 under a
-            // Surface1 zone each would read as a darker rectangle, which is the box this panel keeps
-            // growing back.
+            // ServerInfoBacking follows it exactly. It exists to stop the shader writing black
+            // through transparent gaps, not to be seen; left on Surface0 under a Surface1 zone it
+            // would read as a darker rectangle, which is the box this panel keeps growing back.
+            // The character page had a backing of its own for the same reason and no longer needs
+            // one: LobbyCrtBacking already covers the whole captured area in this same colour.
             ServerInfoBacking.PanelOverride = crt
-                ? new StyleBoxFlat { BackgroundColor = CrtTerminalPalette.Surface1 }
-                : null;
-
-            CharacterPreview.CharacterBacking.PanelOverride = crt
                 ? new StyleBoxFlat { BackgroundColor = CrtTerminalPalette.Surface1 }
                 : null;
 
@@ -126,9 +144,6 @@ namespace Content.Client.Lobby.UI
             // the stylesheet rule.
             if (!ServerInfoBacking.HasStyleClass(StyleNano.StyleClassCrtPanelFill))
                 ServerInfoBacking.AddStyleClass(StyleNano.StyleClassCrtPanelFill);
-
-            if (!CharacterPreview.CharacterBacking.HasStyleClass(StyleNano.StyleClassCrtPanelFill))
-                CharacterPreview.CharacterBacking.AddStyleClass(StyleNano.StyleClassCrtPanelFill);
 
             LobbyCrt.Source = LobbyCrtContent;
             LobbyCrt.Phosphor = StyleNano.CrtGreen;

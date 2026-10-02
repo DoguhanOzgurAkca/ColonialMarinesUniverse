@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Server._CMU14.Ghost.Roles;
 using Content.Server._RMC14.Ghost.Roles;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
@@ -60,6 +61,7 @@ public sealed partial class GhostRoleSystem : EntitySystem
     [Dependency] private GameTicker _gameTicker = default!;
     [Dependency] private IBanManager _banManager = default!;
     [Dependency] private JobWhitelistManager _jobWhitelist = default!;
+    [Dependency] private CMUGhostRoleCategorySystem _ghostRoleCategories = default!;
 
     private uint _nextRoleIdentifier;
     private bool _needsUpdateGhostRoleCount = true;
@@ -761,7 +763,10 @@ public sealed partial class GhostRoleSystem : EntitySystem
                 Requirements = role.Requirements,
                 Kind = kind,
                 RafflePlayerCount = rafflePlayerCount,
-                RaffleEndTime = raffleEndTime
+                RaffleEndTime = raffleEndTime,
+                RaffleDuration = raffle?.CumulativeTime ?? TimeSpan.Zero,
+                Category = _ghostRoleCategories.GetCategory(uid, role.Category?.Id, role.JobProto?.Id),
+                Location = _ghostRoleCategories.GetLocation(uid),
             });
         }
 

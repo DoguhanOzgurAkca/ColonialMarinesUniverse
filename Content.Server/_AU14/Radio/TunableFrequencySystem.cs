@@ -303,14 +303,14 @@ public sealed partial class TunableFrequencySystem : EntitySystem
 
         foreach (var session in Filter.Empty().AddWhereAttachedEntity(HasComp<GhostHearingComponent>).Recipients)
         {
-            var wrapped = _chatManager.AddGhostFollowButton(chat.WrappedMessage, sender, session.Channel);
+            var wrapped = _chatManager.AddGhostFollowButton(chat.WrappedMessage, sender, session.Channel, out var followEntity);
 
-            var ghostChat = wrapped == chat.WrappedMessage
+            var ghostChat = wrapped == chat.WrappedMessage && !followEntity.Valid
                 ? chat
                 : new ChatMessage(chat)
                 {
                     WrappedMessage = wrapped,
-                    GhostFollowEntity = GetNetEntity(sender)
+                    GhostFollowEntity = followEntity
                 };
 
             _netManager.ServerSendMessage(new MsgChatMessage { Message = ghostChat }, session.Channel);

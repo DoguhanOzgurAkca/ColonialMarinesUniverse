@@ -1,5 +1,6 @@
 // ReSharper disable CheckNamespace
 
+using Content.Server.Ghost;
 using Content.Server._RMC14.Xenonids.Watch;
 using Content.Shared._CMU14.Xenonids.Watch;
 using Content.Shared._RMC14.Xenonids;
@@ -9,9 +10,9 @@ namespace Content.Server.Chat.Managers;
 
 internal sealed partial class ChatManager
 {
-    public string AddGhostFollowButton(string wrappedMessage, EntityUid source, INetChannel recipient)
+    public string AddGhostFollowButton(string wrappedMessage, EntityUid source, INetChannel recipient, out NetEntity followEntity)
     {
-        if (!TryCreateGhostFollowButton(wrappedMessage, source, recipient, out var customWrappedMessage, out _))
+        if (!TryCreateGhostFollowButton(wrappedMessage, source, recipient, out var customWrappedMessage, out followEntity))
             return wrappedMessage;
 
         return customWrappedMessage;
@@ -25,8 +26,8 @@ internal sealed partial class ChatManager
         return customWrappedMessage;
     }
 
-    // Parked while the button's presentation is reworked. Returning false leaves every caller's
-    // message unchanged, so the call chain stays intact for when it comes back.
+    // Button or double-click is the client's call (CCVars.ChatGhostFollowButton); this only supplies
+    // the entity to follow.
     private bool TryCreateGhostFollowButton(
         string wrappedMessage,
         EntityUid source,
@@ -36,7 +37,20 @@ internal sealed partial class ChatManager
     {
         customWrappedMessage = wrappedMessage;
         followEntity = default;
-        return false;
+
+        if (!source.Valid || !ShouldShowGhostFollowButton(recipient))
+            return false;
+
+        followEntity = _entityManager.GetNetEntity(source);
+        return true;
+    }
+
+    private bool ShouldShowGhostFollowButton(INetChannel recipient)
+    {
+        if (!_player.TryGetSessionByChannel(recipient, out var session))
+            return false;
+
+        return _entityManager.TrySystem(out GhostSystem? ghost) && ghost.CanGhostFollow(session, out _);
     }
 
     private bool TryCreateXenoWatchButton(
